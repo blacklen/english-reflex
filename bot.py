@@ -232,7 +232,7 @@ class SkipView(discord.ui.View):
         self.user_id = user_id
         self.post = post  # the post THIS message is about (not the live session)
 
-    @discord.ui.button(label="⏭ Bài khác", style=discord.ButtonStyle.secondary)
+    @discord.ui.button(label="⏭ Next", style=discord.ButtonStyle.secondary)
     async def skip(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.id != self.user_id:
             await interaction.response.send_message(
@@ -259,7 +259,7 @@ class SkipView(discord.ui.View):
             view=SkipView(self.user_id, post)
         )
 
-    @discord.ui.button(label="💬 Comment thật", style=discord.ButtonStyle.primary)
+    @discord.ui.button(label="💬 Real comments", style=discord.ButtonStyle.primary)
     async def show_comments(self, interaction: discord.Interaction, button: discord.ui.Button):
         if interaction.user.id != self.user_id:
             await interaction.response.send_message(

@@ -6,8 +6,8 @@ Practice English reflexes on Discord using real posts from Reddit. Completely fr
 
 ## Features
 - `/train` — the bot pulls a Reddit post and asks you a question in English. You reply → the bot analyzes your answer and shows you how a native speaker would say it.
-  - 💬 **Comment thật** (*Real comments*) — click to read the real native-speaker comments on the current post (only you can see them).
-  - ⏭ **Bài khác** (*Next one*) — skip and get a different question.
+  - 💬 **Real comments** — click to post the real native-speaker comments on that post into a thread.
+  - ⏭ **Next** — skip and get a different question.
 - `/digest` — read a summary of today's trending Reddit posts, in Vietnamese.
 - `/done` — end the session.
 
