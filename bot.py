@@ -281,8 +281,11 @@ class SkipView(discord.ui.View):
 
         await interaction.response.defer(ephemeral=True)
         try:
-            # A message can have only one thread — reuse it if it already exists.
-            thread = interaction.message.thread
+            # A message can have only one thread, and a thread started from a
+            # message shares the message's id (discord.py 2.3.2 has no
+            # Message.thread), so reuse the existing one if it's there.
+            guild = interaction.guild
+            thread = guild.get_thread(interaction.message.id) if guild else None
             if thread is None:
                 name = (self.post.get('title') or "Comment thật")[:90]
                 thread = await interaction.message.create_thread(
