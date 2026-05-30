@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: english-reflex-bot
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      # Set these values in the Render dashboard (Environment tab) — never commit them.
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: GUILD_ID
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
