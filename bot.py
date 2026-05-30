@@ -227,9 +227,10 @@ async def send_long(send, text, limit=2000):
 class SkipView(discord.ui.View):
     """View with a Skip button for the training session."""
 
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int, post: dict):
         super().__init__(timeout=300)
         self.user_id = user_id
+        self.post = post  # the post THIS message is about (not the live session)
 
     @discord.ui.button(label="⏭ Bài khác", style=discord.ButtonStyle.secondary)
     async def skip(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -255,7 +256,7 @@ class SkipView(discord.ui.View):
             f"📖 {post['title']}\n\n"
             f"💬 {question}\n\n"
             "(Trả lời bằng tiếng Anh!)",
-            view=SkipView(self.user_id)
+            view=SkipView(self.user_id, post)
         )
 
     @discord.ui.button(label="💬 Comment thật", style=discord.ButtonStyle.primary)
@@ -266,14 +267,7 @@ class SkipView(discord.ui.View):
             )
             return
 
-        session = sessions.get(self.user_id)
-        if not session:
-            await interaction.response.send_message(
-                "Session đã kết thúc. Dùng `/train` để bắt đầu lại!", ephemeral=True
-            )
-            return
-
-        comments = session['post'].get('comments') or []
+        comments = (self.post or {}).get('comments') or []
         if not comments:
             await interaction.response.send_message(
                 "Bài này không có comment nào để đọc 😅", ephemeral=True
@@ -330,7 +324,7 @@ class MyClient(discord.Client):
                 "─────────────────\n"
                 f"📖 {next_post['title']}\n\n"
                 f"💬 {next_question}",
-                view=SkipView(message.author.id)
+                view=SkipView(message.author.id, next_post)
             )
         except Exception as e:
             logger.exception("on_message failed")
@@ -375,7 +369,7 @@ async def cmd_train(interaction: discord.Interaction):
         f"📖 {post['title']}\n\n"
         f"💬 {question}\n\n"
         "(Trả lời bằng tiếng Anh — cứ nhanh, sai không sao!)",
-        view=SkipView(interaction.user.id)
+        view=SkipView(interaction.user.id, post)
     )
 
 
