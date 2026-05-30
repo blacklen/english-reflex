@@ -6,6 +6,11 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python bot.py
     envVars:
+      # Pin Python 3.12 — discord.py 2.3.2 imports the stdlib `audioop` module,
+      # which was removed in Python 3.13+. 3.12 still has it and has wheels for
+      # all deps. (Render ignored runtime.txt, so this env var is authoritative.)
+      - key: PYTHON_VERSION
+        value: 3.12.7
       # Set these values in the Render dashboard (Environment tab) — never commit them.
       - key: DISCORD_TOKEN
         sync: false
