@@ -274,11 +274,31 @@ class SkipView(discord.ui.View):
             )
             return
 
-        body = "\n\n".join(f"{i}. {c}" for i, c in enumerate(comments, 1))
-        await interaction.response.send_message(
-            f"🗣️ **Người bản xứ nói (comment thật từ Reddit):**\n\n{body}",
-            ephemeral=True
+        body = (
+            "🗣️ **Người bản xứ nói (comment thật từ Reddit):**\n\n"
+            + "\n\n".join(f"{i}. {c}" for i, c in enumerate(comments, 1))
         )
+
+        await interaction.response.defer(ephemeral=True)
+        try:
+            # A message can have only one thread — reuse it if it already exists.
+            thread = interaction.message.thread
+            if thread is None:
+                name = (self.post.get('title') or "Comment thật")[:90]
+                thread = await interaction.message.create_thread(
+                    name=name, auto_archive_duration=1440
+                )
+            await send_long(thread.send, body)
+            await interaction.followup.send(
+                f"Đã đăng comment vào thread 👉 {thread.mention}", ephemeral=True
+            )
+        except (discord.Forbidden, discord.HTTPException) as e:
+            # Missing thread permission or channel can't host threads —
+            # fall back to a private (ephemeral) message so it never just fails.
+            logger.warning(f"thread post failed, falling back to ephemeral: {e}")
+            await send_long(
+                lambda t: interaction.followup.send(t, ephemeral=True), body
+            )
 
 # ── Discord client ────────────────────────────────────────────────────────
 class MyClient(discord.Client):
